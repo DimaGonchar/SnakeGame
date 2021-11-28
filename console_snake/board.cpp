@@ -29,10 +29,6 @@ void snakeGame::Board::join() {
 	m_renderingBoard->join();
 }
 
- void snakeGame::Board::printScore() {
-	std::cout <<"Score" << m_score<<std::endl;
-}
-
  void snakeGame::Board::printScreenBuffer() {
 	std::cout<< m_screenBuffer << std::endl;
 	std::cout << "Score" << m_score << std::endl;
@@ -148,11 +144,15 @@ void snakeGame::Board::draw() {
 			m_screenBuffer += (char)219;
 			m_screenBuffer += (char)219;
 		}
+		std::unique_ptr<std::thread> clearScreen{ std::make_unique<std::thread>(
+			                                                 SetConsoleCursorPosition, 
+			                                                 std::ref(m_cursorHandle), std::ref(m_cursorPosition)) 
+		                                          };
+		clearScreen->join();
 
-		std::thread th(SetConsoleCursorPosition, std::ref(m_cursorHandle), std::ref(m_cursorPosition));
-		th.join();
-		std::thread th1(&Board::printScreenBuffer, this);
-		th1.join();
+		std::unique_ptr<std::thread> drawScreen = std::make_unique<std::thread>(&Board::printScreenBuffer, this);
+		drawScreen->join();
+
 		m_screenBuffer = "";
 	
 		std::this_thread::sleep_for(std::chrono::milliseconds{ m_speed });

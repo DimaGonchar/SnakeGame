@@ -25,7 +25,6 @@ namespace snakeGame {
 		bool getGameOverState();
 		void join();
 		void printScreenBuffer();
-		void printScore();
 	private:
 		void direction();
 		void boardState();
